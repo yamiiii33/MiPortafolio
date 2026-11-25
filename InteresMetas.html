@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Evidencias - Intereses y Metas</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#493653">
+    
+    <!-- Tipografía limpia: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/tailwind-config.js"></script>
+
+    <style>
+        :root {
+            --mint: #BCE8D8;
+            --mint-soft: #EDF9F4;
+            --mint-accent: #389E82;
+            --lavender: #DCCCF2;
+            --lavender-soft: #F6F1FC;
+            --plum: #493653;
+            --ink: #1E1B24;
+            --muted: #726A80;
+            --line: rgba(73, 54, 83, 0.1);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #E7DFEF;
+            color: var(--ink);
+            margin: 0;
+        }
+
+        /* Fondo ambiental degradado (Lavanda -> Crema -> Menta) */
+        .app-shell {
+            max-width: 430px;
+            min-height: 100vh;
+            margin: 0 auto;
+            background: linear-gradient(165deg, #EFE5FA 0%, #FAF7F2 42%, #E8F7F1 100%);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+            box-shadow: 0 18px 50px rgba(73, 54, 83, 0.14);
+        }
+
+        .app-shell::before {
+            content: "";
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(220, 204, 242, 0.75) 0%, rgba(220, 204, 242, 0) 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .app-shell::after {
+            content: "";
+            position: absolute;
+            top: 380px;
+            left: -70px;
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(188, 232, 216, 0.55) 0%, rgba(188, 232, 216, 0) 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Fila vertical tipo listado */
+        .vertical-row {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 14px 16px;
+            box-shadow: 0 4px 14px rgba(73, 54, 83, 0.04);
+            transition: all 0.15s ease;
+        }
+
+        .vertical-row:hover {
+            background: #FFFFFF;
+            transform: translateY(-1px);
+        }
+
+        /* Listado vertical hacia abajo para intereses/aficiones */
+        #aficiones-grid {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 10px !important;
+        }
+
+        #aficiones-grid > div {
+            width: 100% !important;
+            height: auto !important;
+            min-height: 54px !important;
+            padding: 12px 16px !important;
+            background: rgba(255, 255, 255, 0.85) !important;
+            backdrop-filter: blur(8px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.95) !important;
+            border-radius: 16px !important;
+            box-shadow: 0 4px 14px rgba(73, 54, 83, 0.04) !important;
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+        }
+
+        /* Tabs segmentados para los plazos */
+        .segment-btn {
+            flex: 1;
+            padding: 8px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 12px;
+            color: var(--muted);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .segment-btn.active {
+            background: var(--plum);
+            color: #FFFFFF;
+            box-shadow: 0 2px 8px rgba(73, 54, 83, 0.2);
+        }
+
+        /* Inputs inyectados dinámicamente dentro de #modalFields */
+        #modalFields input,
+        #modalFields select,
+        #modalFields textarea {
+            width: 100% !important;
+            background: #F8F6FA !important;
+            border: 1.5px solid #E5DFEC !important;
+            border-radius: 12px !important;
+            padding: 10px 14px !important;
+            font-size: 13px !important;
+            color: var(--ink) !important;
+        }
+
+        #modalFields input:focus,
+        #modalFields select:focus,
+        #modalFields textarea:focus {
+            outline: none !important;
+            border-color: var(--plum) !important;
+            background: #FFFFFF !important;
+        }
+
+        /* Barra inferior translúcida */
+        .bottom-nav-clean {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(14px);
+            border-top: 1px solid var(--line);
+            padding: 10px 16px 14px 16px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 40;
+        }
+
+        .nav-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            color: #8E859C;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .nav-tab.active {
+            color: var(--plum);
+            font-weight: 700;
+        }
+
+        .nav-tab.active .nav-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--mint-accent);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-shell">
+        
+        <!-- TOPBAR MINIMALISTA -->
+        <header class="px-5 pt-5 pb-3 flex items-center justify-between border-b border-[#493653]/10 sticky top-0 bg-white/60 backdrop-blur-md z-30">
+            <span class="text-xs font-bold text-[#389E82] bg-[#EDF9F4] px-2.5 py-1 rounded-full">
+                Mi Futuro
+            </span>
+
+            <span class="text-sm font-bold text-[#1E1B24] tracking-tight">Intereses y Metas</span>
+
+            <button type="button" onclick="openModal('meta')" class="admin-only text-xs font-bold text-white bg-[#493653] hover:opacity-90 px-3 py-1.5 rounded-full flex items-center gap-1 shadow-xs transition-opacity cursor-pointer">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                <span>Agregar meta</span>
+            </button>
+        </header>
+
+        <!-- CONTENIDO PRINCIPAL: TODO EN LISTADO VERTICAL HACIA ABAJO -->
+        <main class="flex-1 px-5 pt-5 pb-28 flex flex-col gap-6 relative z-10">
+
+            <!-- 1. INTERESES PROFESIONALES -->
+            <section>
+                <div class="flex items-center justify-between mb-2 px-1">
+                    <h2 class="text-sm font-bold text-[#1E1B24]">Intereses Profesionales</h2>
+                    <span class="text-[11px] font-semibold text-[#389E82]">Toca para editar</span>
+                </div>
+
+                <div id="interesesCard" class="vertical-row flex items-center justify-between gap-3 cursor-pointer" onclick="openModal('interes')">
+                    <div class="flex items-start gap-3 min-w-0 flex-1">
+                        <div class="w-9 h-9 rounded-xl bg-[#F6F1FC] text-[#493653] flex items-center justify-center shrink-0 mt-0.5">
+                            <i data-lucide="compass" class="w-4 h-4"></i>
+                        </div>
+                        <p id="intereses-text" class="text-xs font-medium text-[#726A80] leading-relaxed">
+                            Toca para añadir tus intereses profesionales y áreas en las que deseas crecer...
+                        </p>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-[#9A92A6] shrink-0"></i>
+                </div>
+            </section>
+
+            <!-- 2. INTERESES PERSONALES / AFICIONES (LISTADO VERTICAL EN LUGAR DE CUADRITOS) -->
+            <section>
+                <div class="flex items-center justify-between mb-2 px-1">
+                    <div>
+                        <h2 class="text-sm font-bold text-[#1E1B24]">Intereses Personales</h2>
+                        <p class="text-[11px] text-[#726A80]">Actividades y pasatiempos que te inspiran</p>
+                    </div>
+                    <button type="button" onclick="openModal('aficion')" class="admin-only text-xs font-bold text-[#493653] bg-white/85 hover:bg-white border border-[#DCCCF2] px-3 py-1 rounded-full flex items-center gap-1 shadow-xs transition-colors cursor-pointer">
+                        <i data-lucide="plus" class="w-3 h-3"></i>
+                        <span>Añadir</span>
+                    </button>
+                </div>
+
+                <!-- Listado vertical hacia abajo -->
+                <div id="aficiones-grid" class="flex flex-col gap-2.5">
+                    <div class="admin-only cursor-pointer" onclick="openModal('aficion')">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-[#EDF9F4] text-[#389E82] flex items-center justify-center">
+                                <i data-lucide="heart" class="w-4 h-4"></i>
+                            </div>
+                            <span class="text-xs font-semibold text-[#726A80]">Añadir un interés o pasatiempo...</span>
+                        </div>
+                        <i data-lucide="plus" class="w-4 h-4 text-[#493653]"></i>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. METAS PROFESIONALES (SELECTOR SEGMENTADO + LISTA VERTICAL) -->
+            <section>
+                <div class="flex items-center justify-between mb-2.5 px-1">
+                    <h2 class="text-sm font-bold text-[#1E1B24]">Metas Profesionales</h2>
+                    <span class="text-[10px] font-bold text-[#389E82] bg-[#EDF9F4] px-2.5 py-0.5 rounded-full">Por plazo</span>
+                </div>
+
+                <!-- Selector de plazo -->
+                <div class="bg-white/75 backdrop-blur-md p-1 rounded-2xl border border-white flex gap-1 mb-3">
+                    <button type="button" onclick="filterGoalStage('all', this)" class="segment-btn active">Todas</button>
+                    <button type="button" onclick="filterGoalStage('3m', this)" class="segment-btn">Corto plazo</button>
+                    <button type="button" onclick="filterGoalStage('6m', this)" class="segment-btn">Mediano</button>
+                    <button type="button" onclick="filterGoalStage('1y', this)" class="segment-btn">Largo plazo</button>
+                </div>
+
+                <!-- Filas verticales apiladas hacia abajo -->
+                <div class="flex flex-col gap-2.5" id="timeline-container">
+                    
+                    <!-- Meta Corto Plazo (3 meses) -->
+                    <div data-stage="3m" class="vertical-row flex flex-col gap-2">
+                        <div class="flex items-center justify-between">
+                            <span class="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#389E82]">
+                                <span class="w-2 h-2 rounded-full bg-[#389E82]"></span>
+                                Corto plazo (3 meses)
+                            </span>
+                            <button type="button" onclick="openModal('meta')" class="admin-only text-[11px] font-semibold text-[#726A80] hover:text-[#493653]">
+                                + Agregar meta
+                            </button>
+                        </div>
+                        <div id="meta-3-meses" class="text-xs font-medium text-[#1E1B24] pl-3.5 border-l-2 border-[#BCE8D8]"></div>
+                    </div>
+
+                    <!-- Meta Mediano Plazo (6 meses) -->
+                    <div data-stage="6m" class="vertical-row flex flex-col gap-2">
+                        <div class="flex items-center justify-between">
+                            <span class="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#7C5C8E]">
+                                <span class="w-2 h-2 rounded-full bg-[#7C5C8E]"></span>
+                                Mediano plazo (6 meses)
+                            </span>
+                            <button type="button" onclick="openModal('meta')" class="admin-only text-[11px] font-semibold text-[#726A80] hover:text-[#493653]">
+                                + Agregar meta
+                            </button>
+                        </div>
+                        <div id="meta-6-meses" class="text-xs font-medium text-[#1E1B24] pl-3.5 border-l-2 border-[#DCCCF2]"></div>
+                    </div>
+
+                    <!-- Meta Largo Plazo (1 año) -->
+                    <div data-stage="1y" class="vertical-row flex flex-col gap-2">
+                        <div class="flex items-center justify-between">
+                            <span class="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#493653]">
+                                <span class="w-2 h-2 rounded-full bg-[#493653]"></span>
+                                Largo plazo (1 año)
+                            </span>
+                            <button type="button" onclick="openModal('meta')" class="admin-only text-[11px] font-semibold text-[#726A80] hover:text-[#493653]">
+                                + Agregar meta
+                            </button>
+                        </div>
+                        <div id="meta-1-ano" class="text-xs font-medium text-[#1E1B24] pl-3.5 border-l-2 border-[#493653]"></div>
+                    </div>
+
+                </div>
+            </section>
+
+        </main>
+
+        <!-- BARRA INFERIOR MINIMALISTA -->
+        <nav class="bottom-nav-clean">
+            <a href="perfil-usuario.html" class="nav-tab">
+                <i data-lucide="user" class="w-5 h-5"></i>
+                <span>Perfil</span>
+            </a>
+            <a href="ProyectosPracticas.html" class="nav-tab">
+                <i data-lucide="folder-kanban" class="w-5 h-5"></i>
+                <span>Proyectos</span>
+            </a>
+            <a href="ExperienciaLaboral.html" class="nav-tab">
+                <i data-lucide="briefcase" class="w-5 h-5"></i>
+                <span>Trayectoria</span>
+            </a>
+            <a href="#" class="nav-tab active">
+                <i data-lucide="compass" class="w-5 h-5"></i>
+                <span>Metas</span>
+                <span class="nav-dot"></span>
+            </a>
+        </nav>
+
+        <!-- MODAL UNIVERSAL (IDS INTACTOS PARA METAS.JS) -->
+        <div id="dynamicModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4 backdrop-blur-sm">
+            <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="modalTitle" class="text-base font-bold text-[#1E1B24]">Añadir</h3>
+                    <button type="button" onclick="closeModal()" class="p-1.5 rounded-full hover:bg-gray-100 text-[#726A80]">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <form id="dynamicForm" class="flex flex-col gap-4">
+                    <input type="hidden" id="modalType" value="">
+                    <div id="modalFields" class="flex flex-col gap-3"></div>
+                    <button type="submit" class="mt-2 w-full bg-[#493653] text-white font-bold text-xs py-3.5 rounded-xl shadow-sm flex items-center justify-center gap-2 transition-transform active:scale-95 cursor-pointer">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                        <span>Guardar</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/metas.js"></script>
+    <script>
+        function filterGoalStage(stage, btn) {
+            document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            document.querySelectorAll('#timeline-container > div[data-stage]').forEach(row => {
+                if (stage === 'all' || row.getAttribute('data-stage') === stage) {
+                    row.style.display = 'flex';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    </script>
+</body>
+</html>

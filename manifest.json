@@ -1,0 +1,18 @@
+{
+  "name": "Portal de Evidencias",
+  "short_name": "Evidencias",
+  "description": "Portafolio profesional y registro de evidencias",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#111827",
+  "theme_color": "#d6bc9f",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3135/3135692.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

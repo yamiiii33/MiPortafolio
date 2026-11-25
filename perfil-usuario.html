@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Evidencias - Mi Perfil</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#493653">
+
+    <!-- Tipografías limpias: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/tailwind-config.js"></script>
+
+    <style>
+        :root {
+            --mint: #BCE8D8;
+            --mint-soft: #EDF9F4;
+            --mint-accent: #389E82;
+            --lavender: #DCCCF2;
+            --lavender-soft: #F6F1FC;
+            --plum: #493653;
+            --ink: #1E1B24;
+            --muted: #726A80;
+            --line: rgba(73, 54, 83, 0.1);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #E7DFEF;
+            color: var(--ink);
+            margin: 0;
+        }
+
+        /* Contenedor principal con fondo ambiental degradado (Lavanda -> Crema -> Menta) */
+        .app-shell {
+            max-width: 430px;
+            min-height: 100vh;
+            margin: 0 auto;
+            background: linear-gradient(165deg, #EFE5FA 0%, #FAF7F2 42%, #E8F7F1 100%);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+            box-shadow: 0 18px 50px rgba(73, 54, 83, 0.14);
+        }
+
+        /* Orbes suaves decorativos en el fondo para darle profundidad sin saturar */
+        .app-shell::before {
+            content: "";
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(220, 204, 242, 0.75) 0%, rgba(220, 204, 242, 0) 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .app-shell::after {
+            content: "";
+            position: absolute;
+            top: 380px;
+            left: -70px;
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(188, 232, 216, 0.55) 0%, rgba(188, 232, 216, 0) 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Ocultar barra de scroll en carrusel horizontal */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Tarjetas del carrusel horizontal */
+        .carousel-card-plum {
+            background: linear-gradient(135deg, #493653 0%, #7C5C8E 65%, #B89AD4 135%);
+            color: #FFFFFF;
+        }
+        .carousel-card-mint {
+            background: linear-gradient(135deg, #2D5A52 0%, #438D78 65%, #9ADBC4 135%);
+            color: #FFFFFF;
+        }
+        .carousel-card-lavender {
+            background: linear-gradient(135deg, #5B4668 0%, #9E82B8 70%, #D9C6EE 140%);
+            color: #FFFFFF;
+        }
+
+        /* Fila tipo listado translúcida sobre el fondo degradado */
+        .list-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: 18px;
+            box-shadow: 0 4px 14px rgba(73, 54, 83, 0.04);
+            transition: all 0.15s ease;
+        }
+        .list-row:hover {
+            background: #FFFFFF;
+            transform: translateY(-1px);
+        }
+
+        /* Estilos limpios para los items dinámicos de #documentsList */
+        #documentsList > div {
+            background: rgba(255, 255, 255, 0.85) !important;
+            backdrop-filter: blur(8px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.95) !important;
+            border-radius: 18px !important;
+            box-shadow: 0 4px 14px rgba(73, 54, 83, 0.04) !important;
+            padding: 12px 14px !important;
+        }
+
+        /* Barra inferior translúcida */
+        .bottom-nav-clean {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(14px);
+            border-top: 1px solid var(--line);
+            padding: 10px 16px 14px 16px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 40;
+        }
+
+        .nav-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            color: #8E859C;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .nav-tab.active {
+            color: var(--plum);
+            font-weight: 700;
+        }
+
+        .nav-tab.active .nav-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--mint-accent);
+        }
+
+        /* Inputs limpios en modales */
+        .clean-input {
+            width: 100%;
+            background: #F8F6FA;
+            border: 1.5px solid #E5DFEC;
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: var(--ink);
+        }
+        .clean-input:focus {
+            outline: none;
+            border-color: var(--plum);
+            background: #FFFFFF;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-shell">
+        
+        <!-- 1. TOPBAR MINIMALISTA TRANSLÚCIDA -->
+        <header class="px-5 pt-5 pb-3 flex items-center justify-between border-b border-[#493653]/10 sticky top-0 bg-white/60 backdrop-blur-md z-30">
+            <button type="button" onclick="exportFullCV()" title="Descargar CV" class="w-9 h-9 rounded-full bg-white/70 hover:bg-white flex items-center justify-center text-[#493653] shadow-xs transition-colors cursor-pointer">
+                <i data-lucide="file-down" class="w-4 h-4"></i>
+            </button>
+
+            <span class="text-sm font-bold text-[#1E1B24] tracking-tight">Perfil</span>
+
+            <button type="button" onclick="logoutUser()" title="Cerrar sesión" class="w-9 h-9 rounded-full bg-white/70 hover:bg-white flex items-center justify-center text-[#493653] shadow-xs transition-colors cursor-pointer">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+            </button>
+        </header>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="flex-1 px-5 pt-5 pb-28 flex flex-col gap-6 relative z-10">
+
+            <!-- 2. PERFIL HORIZONTAL (FOTO CIRCULAR + DATOS) -->
+            <section class="flex items-center gap-4">
+                <div id="avatarUploadTrigger" onclick="triggerAvatarUpload()" class="relative w-20 h-20 rounded-full bg-[#DCCCF2] flex items-center justify-center text-2xl font-extrabold text-[#493653] shrink-0 cursor-pointer group ring-4 ring-white/80 shadow-sm">
+                    <img id="userAvatarImg" src="" alt="Foto de perfil" class="hidden w-full h-full object-cover rounded-full">
+                    <span id="userAvatarText">S</span>
+                    <!-- Insignia flotante de cámara -->
+                    <span class="admin-only absolute bottom-0 right-0 w-7 h-7 rounded-full bg-[#493653] text-[#BCE8D8] border-2 border-white flex items-center justify-center shadow-sm">
+                        <i data-lucide="camera" class="w-3.5 h-3.5"></i>
+                    </span>
+                </div>
+                <input type="file" id="avatarFileInput" accept="image/*" class="hidden">
+
+                <div class="min-w-0 flex-1">
+                    <h1 id="userNameDisplay" class="text-xl font-extrabold text-[#1E1B24] capitalize truncate">Sofía</h1>
+                    <p id="userRoleDisplay" class="text-xs text-[#726A80] font-medium truncate mt-0.5">Estudiante / Colaborador</p>
+                    <button type="button" onclick="openModal('editProfileModal')" class="admin-only mt-1.5 text-xs font-bold text-[#389E82] hover:underline inline-flex items-center gap-1 cursor-pointer">
+                        <span>Editar perfil</span>
+                        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- 3. CARRUSEL HORIZONTAL DESLIZABLE: EXPEDIENTE ACADÉMICO -->
+            <section>
+                <div class="flex items-center justify-between mb-2.5">
+                    <h2 class="text-base font-bold text-[#1E1B24]">Mi Expediente</h2>
+                    <span class="text-[11px] font-semibold text-[#726A80]">Desliza →</span>
+                </div>
+
+                <div class="flex gap-3 overflow-x-auto no-scrollbar pb-1 -mx-5 px-5">
+                    <a href="formacionAcademica.html" class="carousel-card-plum min-w-[168px] rounded-2xl p-4 flex flex-col justify-between h-28 shrink-0 shadow-sm hover:opacity-95 transition-opacity">
+                        <div class="w-8 h-8 rounded-xl bg-white/15 flex items-center justify-center">
+                            <i data-lucide="graduation-cap" class="w-4 h-4 text-[#BCE8D8]"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold block leading-snug">Formación Académica</span>
+                            <span class="text-[10px] text-white/75">Grados y títulos</span>
+                        </div>
+                    </a>
+
+                    <a href="FormacionExtracurricular.html" class="carousel-card-mint min-w-[168px] rounded-2xl p-4 flex flex-col justify-between h-28 shrink-0 shadow-sm hover:opacity-95 transition-opacity">
+                        <div class="w-8 h-8 rounded-xl bg-white/15 flex items-center justify-center">
+                            <i data-lucide="award" class="w-4 h-4 text-white"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold block leading-snug">Extra-curricular</span>
+                            <span class="text-[10px] text-white/80">Cursos y talleres</span>
+                        </div>
+                    </a>
+
+                    <a href="Habilidades.html" class="carousel-card-lavender min-w-[168px] rounded-2xl p-4 flex flex-col justify-between h-28 shrink-0 shadow-sm hover:opacity-95 transition-opacity">
+                        <div class="w-8 h-8 rounded-xl bg-white/15 flex items-center justify-center">
+                            <i data-lucide="sparkles" class="w-4 h-4 text-white"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold block leading-snug">Habilidades</span>
+                            <span class="text-[10px] text-white/80">Técnicas y blandas</span>
+                        </div>
+                    </a>
+                </div>
+            </section>
+
+            <!-- 4. BARRA DE PROGRESO VISUAL DEL PORTAFOLIO -->
+            <section class="bg-white/80 backdrop-blur-md rounded-2xl p-4 border border-white shadow-xs">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-semibold text-[#1E1B24]">Progreso de tu expediente</span>
+                    <span id="profileProgressLabel" class="text-xs font-extrabold text-[#389E82]">Activo</span>
+                </div>
+                <div class="w-full h-2 bg-[#E6DFF0] rounded-full overflow-hidden">
+                    <div id="profileProgressBar" class="h-full bg-gradient-to-r from-[#493653] to-[#389E82] rounded-full transition-all duration-500" style="width: 75%;"></div>
+                </div>
+            </section>
+
+            <!-- 5. LISTADO LIMPIO DE ACCIONES Y CONTACTO -->
+            <section class="flex flex-col gap-2.5">
+                <h2 class="text-base font-bold text-[#1E1B24] mb-0.5">Información y CV</h2>
+
+                <!-- Fila Descargar CV -->
+                <button type="button" onclick="exportFullCV()" class="list-row w-full text-left cursor-pointer">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-[#EDF9F4] text-[#389E82] flex items-center justify-center shrink-0">
+                            <i data-lucide="file-text" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-[#1E1B24] block">Currículum Vitae (PDF)</span>
+                            <span class="text-[11px] text-[#726A80]">Exportar resumen completo</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-[#9A92A6]"></i>
+                </button>
+
+                <!-- Fila Teléfono -->
+                <div onclick="openModal('contactModal')" class="list-row cursor-pointer">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-9 h-9 rounded-xl bg-[#F6F1FC] text-[#493653] flex items-center justify-center shrink-0">
+                            <i data-lucide="phone" class="w-4 h-4"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="text-[10px] font-semibold text-[#726A80] block">Teléfono</span>
+                            <span id="displayPhone" class="text-xs font-bold text-[#1E1B24] block truncate">+52 (55) 1234-5678</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-[#9A92A6] shrink-0"></i>
+                </div>
+
+                <!-- Fila Correo -->
+                <div onclick="openModal('contactModal')" class="list-row cursor-pointer">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-9 h-9 rounded-xl bg-[#F6F1FC] text-[#493653] flex items-center justify-center shrink-0">
+                            <i data-lucide="mail" class="w-4 h-4"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="text-[10px] font-semibold text-[#726A80] block">Correo electrónico</span>
+                            <span id="displayEmail" class="text-xs font-bold text-[#1E1B24] block truncate">sofia@evidencias.mx</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-[#9A92A6] shrink-0"></i>
+                </div>
+            </section>
+
+            <!-- 6. LISTADO DE DOCUMENTACIÓN PROBATORIA -->
+            <section class="flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-base font-bold text-[#1E1B24]">Documentos personales</h2>
+                        <p id="docsSubtitle" class="text-[11px] text-[#726A80]">Archivos probatorios en PDF o imagen</p>
+                    </div>
+                    <button type="button" onclick="openModal('addDocModal')" class="admin-only text-xs font-bold text-[#493653] bg-white/85 hover:bg-white border border-[#DCCCF2] px-3 py-1.5 rounded-full flex items-center gap-1 shadow-xs transition-colors cursor-pointer">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                        <span>Añadir</span>
+                    </button>
+                </div>
+
+                <input type="file" id="requiredDocFileInput" accept=".pdf,image/*" class="hidden">
+
+                <!-- Lista dinámica en filas limpias -->
+                <div class="flex flex-col gap-2.5" id="documentsList"></div>
+            </section>
+
+        </main>
+
+        <!-- BARRA INFERIOR MINIMALISTA -->
+        <nav class="bottom-nav-clean">
+            <a href="#" class="nav-tab active">
+                <i data-lucide="user" class="w-5 h-5"></i>
+                <span>Perfil</span>
+                <span class="nav-dot"></span>
+            </a>
+            <a href="ProyectosPracticas.html" class="nav-tab">
+                <i data-lucide="folder-kanban" class="w-5 h-5"></i>
+                <span>Proyectos</span>
+            </a>
+            <a href="ExperienciaLaboral.html" class="nav-tab">
+                <i data-lucide="briefcase" class="w-5 h-5"></i>
+                <span>Trayectoria</span>
+            </a>
+            <a href="InteresMetas.html" class="nav-tab">
+                <i data-lucide="compass" class="w-5 h-5"></i>
+                <span>Metas</span>
+            </a>
+        </nav>
+
+        <!-- ==========================================
+             MODALES LIMPIOS (IDS INTACTOS PARA PERFIL.JS)
+        ========================================== -->
+
+        <!-- Modal: Editar Perfil -->
+        <div id="editProfileModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+            <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl transform scale-95 transition-transform duration-300" id="editProfileContent">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-base font-bold text-[#1E1B24]">Editar Perfil</h3>
+                    <button type="button" onclick="closeModal('editProfileModal')" class="p-1.5 rounded-full hover:bg-gray-100 text-[#726A80]">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-3.5 bg-[#FAF9FC] p-3.5 rounded-2xl mb-4 border border-[#EFEBF4]">
+                    <div class="w-14 h-14 rounded-full bg-[#DCCCF2] flex items-center justify-center text-lg font-bold text-[#493653] overflow-hidden shrink-0">
+                        <img id="modalAvatarPreviewImg" src="" alt="Vista previa" class="hidden w-full h-full object-cover">
+                        <span id="modalAvatarPreviewText">S</span>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <button type="button" onclick="triggerAvatarUpload()" class="text-xs font-bold text-[#493653] hover:underline text-left">
+                            Cambiar fotografía
+                        </button>
+                        <button type="button" id="removeAvatarBtn" onclick="removeProfileAvatar()" class="hidden text-[11px] font-semibold text-red-600 hover:underline text-left">
+                            Quitar fotografía
+                        </button>
+                    </div>
+                </div>
+
+                <form id="editProfileForm" onsubmit="saveProfile(event)" class="flex flex-col gap-3.5">
+                    <div>
+                        <label class="block text-xs font-semibold text-[#726A80] mb-1">Nombre de usuario</label>
+                        <input type="text" id="inputUserName" required class="clean-input" placeholder="Ej. Sofía">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-[#726A80] mb-1">Rol o Carrera</label>
+                        <input type="text" id="inputUserRole" value="Estudiante / Colaborador" class="clean-input">
+                    </div>
+                    <div class="flex gap-2.5 pt-2">
+                        <button type="button" onclick="closeModal('editProfileModal')" class="flex-1 bg-[#F3F0F7] text-[#1E1B24] py-2.5 rounded-xl font-semibold text-xs">Cancelar</button>
+                        <button type="submit" class="flex-1 bg-[#493653] text-white py-2.5 rounded-xl font-semibold text-xs">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal: Actualizar Contacto -->
+        <div id="contactModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+            <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl transform scale-95 transition-transform duration-300" id="contactContent">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-base font-bold text-[#1E1B24]">Datos de Contacto</h3>
+                    <button type="button" onclick="closeModal('contactModal')" class="p-1.5 rounded-full hover:bg-gray-100 text-[#726A80]">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <form id="contactForm" onsubmit="saveContact(event)" class="flex flex-col gap-3.5">
+                    <div>
+                        <label class="block text-xs font-semibold text-[#726A80] mb-1">Teléfono</label>
+                        <input type="tel" id="inputPhone" required class="clean-input" placeholder="+52 (55) 1234-5678">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-[#726A80] mb-1">Correo Electrónico</label>
+                        <input type="email" id="inputEmail" required class="clean-input" placeholder="correo@evidencias.mx">
+                    </div>
+                    <div class="flex gap-2.5 pt-2">
+                        <button type="button" onclick="closeModal('contactModal')" class="flex-1 bg-[#F3F0F7] text-[#1E1B24] py-2.5 rounded-xl font-semibold text-xs">Cancelar</button>
+                        <button type="submit" class="flex-1 bg-[#493653] text-white py-2.5 rounded-xl font-semibold text-xs">Actualizar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal: Ver Detalle de Documento -->
+        <div id="viewDocModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+            <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl transform scale-95 transition-transform duration-300" id="viewDocContent">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 id="modalDocTitle" class="text-base font-bold text-[#1E1B24] truncate">Nombre del documento</h3>
+                    <button type="button" onclick="closeModal('viewDocModal')" class="p-1.5 rounded-full hover:bg-gray-100 text-[#726A80] shrink-0">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <div class="flex flex-col gap-2.5 py-2">
+                    <p id="modalDocDesc" class="text-xs text-[#726A80] leading-relaxed">Descripción detallada del documento.</p>
+                    <div id="modalDocPreview" class="hidden rounded-2xl overflow-hidden border border-[#EFEBF4] bg-[#FAF9FC] flex items-center justify-center max-h-44"></div>
+
+                    <div class="bg-[#FAF9FC] rounded-xl p-3 flex justify-between items-center text-xs">
+                        <span class="text-[#726A80]">Archivo:</span>
+                        <span id="modalDocFileName" class="font-bold text-[#1E1B24] truncate max-w-[160px]">archivo.pdf</span>
+                    </div>
+                    <div class="bg-[#FAF9FC] rounded-xl p-3 flex justify-between items-center text-xs">
+                        <span class="text-[#726A80]">Fecha:</span>
+                        <span id="modalDocDate" class="font-semibold text-[#1E1B24]">Hoy</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-2 pt-3">
+                    <div class="flex gap-2">
+                        <button type="button" onclick="downloadCurrentDocument()" class="flex-1 bg-[#493653] text-white py-2.5 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5">
+                            <i data-lucide="download" class="w-3.5 h-3.5"></i> Descargar
+                        </button>
+                        <button type="button" id="modalReplaceBtn" onclick="replaceCurrentDocument()" class="flex-1 bg-[#F3F0F7] text-[#1E1B24] py-2.5 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Reemplazar
+                        </button>
+                    </div>
+                    <button type="button" id="modalDeleteCustomBtn" onclick="deleteCurrentCustomDocument()" class="hidden w-full bg-red-50 text-red-600 py-2 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Eliminar archivo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Añadir Nuevo Documento -->
+        <div id="addDocModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+            <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl transform scale-95 transition-transform duration-300" id="addDocContent">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-base font-bold text-[#1E1B24]">Añadir Documento</h3>
+                    <button type="button" onclick="closeModal('addDocModal')" class="p-1.5 rounded-full hover:bg-gray-100 text-[#726A80]">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <form id="addDocForm" onsubmit="saveNewDocument(event)" class="flex flex-col gap-3.5">
+                    <div>
+                        <label class="block text-xs font-semibold text-[#726A80] mb-1">Título del documento *</label>
+                        <input type="text" id="newDocTitle" required class="clean-input" placeholder="Ej. Constancia de estudios">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-[#726A80] mb-1">Descripción breve</label>
+                        <textarea id="newDocDesc" rows="2" class="clean-input resize-none" placeholder="Breve detalle de la evidencia..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-[#726A80] mb-1">Archivo digital *</label>
+                        <input type="file" id="newDocFile" accept=".pdf,image/*" class="hidden">
+                        <div id="dropZoneNewDoc" onclick="document.getElementById('newDocFile').click()" class="border-2 border-dashed border-[#DCCCF2] rounded-2xl p-4 text-center bg-[#FAF9FC] hover:bg-[#F6F1FC] transition-colors cursor-pointer">
+                            <i data-lucide="upload-cloud" class="w-6 h-6 mx-auto text-[#493653] mb-1"></i>
+                            <span id="newDocFileName" class="text-xs text-[#1E1B24] block font-semibold truncate">Adjuntar PDF o imagen</span>
+                            <span class="text-[10px] text-[#726A80] block mt-0.5">Máx. 2 MB</span>
+                        </div>
+                        <button type="button" id="clearNewDocFileBtn" onclick="clearNewDocFile()" class="hidden mt-1.5 text-[11px] font-semibold text-red-600 hover:underline flex items-center gap-1">
+                            <i data-lucide="x-circle" class="w-3.5 h-3.5"></i> Quitar archivo
+                        </button>
+                    </div>
+                    <div class="flex gap-2.5 pt-2">
+                        <button type="button" onclick="closeModal('addDocModal')" class="flex-1 bg-[#F3F0F7] text-[#1E1B24] py-2.5 rounded-xl font-semibold text-xs">Cancelar</button>
+                        <button type="submit" class="flex-1 bg-[#493653] text-white py-2.5 rounded-xl font-semibold text-xs">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div id="toastNotification" class="fixed top-5 right-5 bg-[#1E1B24] text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2.5 transform translate-y-[-200%] transition-transform duration-300 z-50 text-xs font-semibold">
+            <i data-lucide="check-circle" class="w-4 h-4 text-[#BCE8D8]"></i>
+            <span id="toastMessage">Operación realizada con éxito</span>
+        </div>
+
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/perfil.js"></script>
+    <script>
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    </script>
+</body>
+</html>

@@ -1,0 +1,331 @@
+/* ==========================================================
+   PORTAL DE EVIDENCIAS — APP MÓVIL EDITORIAL
+   Paleta: Menta, Lavanda y Ciruela
+========================================================== */
+
+:root {
+    --mint: #BCE8D8;
+    --mint-light: #E5F5ED;
+    --mint-dark: #438D78;
+    --lavender: #DCCCF2;
+    --lavender-light: #F0EAF9;
+    --plum: #493653;
+    --plum-soft: #725D7E;
+    --cream: #FAF8F4;
+    --white: #FFFFFF;
+    --text: #342B39;
+    --muted: #827989;
+    --border: #E8E1EB;
+    --ink: 1.5px solid #493653;
+    --shadow-hard: 4px 4px 0px #493653;
+    --radius-sheet: 38px;
+    --radius-card: 22px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    background-color: #EFEBF4; /* Fondo exterior si se abre en PC */
+}
+
+/* Marco estilo App Móvil centrado */
+body {
+    max-width: 460px !important;
+    margin: 0 auto !important;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif !important;
+    color: var(--text) !important;
+    background-color: var(--lavender) !important;
+    /* Cabecera orgánica estilo imagen de referencia */
+    background-image:
+        radial-gradient(circle at 14% 18%, var(--mint) 0%, var(--mint) 95px, transparent 96px),
+        radial-gradient(circle at 82% 11%, var(--mint-dark) 0%, var(--mint-dark) 32px, transparent 33px),
+        radial-gradient(circle at 76% 10%, transparent 38px, rgba(255,255,255,0.9) 39px, rgba(255,255,255,0.9) 41px, transparent 42px),
+        radial-gradient(circle at 42% -4%, transparent 68px, var(--plum) 69px, var(--plum) 71px, transparent 72px) !important;
+    background-repeat: no-repeat !important;
+    box-shadow: 0 0 45px rgba(73, 54, 83, 0.14);
+    position: relative;
+    overflow-x: hidden;
+    padding: 0 !important;
+}
+
+/* ==========================================
+   CABECERA SUPERIOR (HERO MÓVIL)
+========================================== */
+body > div > header,
+body > header {
+    padding: 36px 24px 28px 24px !important;
+    margin-bottom: 0 !important;
+    text-align: left !important;
+    align-items: flex-start !important;
+}
+
+body > div > header h1,
+body > header h1 {
+    color: var(--white) !important;
+    text-shadow: 0 2px 10px rgba(73, 54, 83, 0.22);
+    font-size: 2rem !important;
+    font-weight: 800 !important;
+    line-height: 1.1;
+    text-align: left !important;
+}
+
+/* ==========================================
+   HOJA INFERIOR SUPERPUESTA (BOTTOM SHEET)
+========================================== */
+body > div > main,
+body > main {
+    width: 100% !important;
+    flex: 1;
+    background: var(--white) !important;
+    border-top: var(--ink) !important;
+    border-radius: var(--radius-sheet) var(--radius-sheet) 0 0 !important;
+    padding: 30px 24px 95px 24px !important;
+    box-shadow: 0 -10px 30px rgba(73, 54, 83, 0.08) !important;
+}
+
+/* Limpieza de contenedores internos de Tailwind */
+body.login-page > div {
+    max-width: 100% !important;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+body.login-page main > div:first-child {
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin-bottom: 18px !important;
+    border-radius: 0 !important;
+}
+
+/* ==========================================
+   TIPOGRAFÍA, INPUTS Y BOTONES
+========================================== */
+h1, h2, h3 {
+    color: var(--plum) !important;
+    letter-spacing: -0.04em;
+}
+
+h2 {
+    font-weight: 800 !important;
+    font-size: 1.4rem !important;
+}
+
+p, label, span {
+    text-wrap: pretty;
+}
+
+label {
+    color: var(--plum-soft) !important;
+}
+
+input:not([type="file"]),
+select,
+textarea {
+    background: var(--cream) !important;
+    border: 1.5px solid var(--border) !important;
+    border-radius: 16px !important;
+    color: var(--text) !important;
+    padding: 13px 16px !important;
+    transition: all 0.2s ease;
+}
+
+input#email {
+    padding-left: 42px !important;
+}
+
+input:not([type="file"]):focus,
+select:focus,
+textarea:focus {
+    outline: none !important;
+    background: var(--white) !important;
+    border-color: var(--plum) !important;
+    box-shadow: 0 0 0 4px var(--mint-light) !important;
+}
+
+/* Botones principales tipo píldora ("Open" de la referencia) */
+button[type="submit"],
+#submitBtn,
+button.bg-blue-600,
+button.bg-indigo-600 {
+    background: var(--mint-dark) !important;
+    color: var(--white) !important;
+    border: 1.5px solid var(--plum) !important;
+    border-radius: 999px !important;
+    padding: 13px 24px !important;
+    font-weight: 700 !important;
+    box-shadow: 3px 3px 0px var(--plum) !important;
+    transition: transform 0.15s ease, background 0.2s ease !important;
+}
+
+button[type="submit"]:hover,
+#submitBtn:hover {
+    background: var(--plum) !important;
+    transform: translateY(-2px);
+}
+
+/* Botón Invitado */
+#guestBtn {
+    background: var(--lavender-light) !important;
+    color: var(--plum) !important;
+    border: 1.5px solid var(--plum) !important;
+    border-radius: 999px !important;
+    padding: 13px 22px !important;
+    font-weight: 700 !important;
+    margin-bottom: 16px !important;
+}
+
+#guestBtn:hover {
+    background: var(--mint-light) !important;
+}
+
+/* Textos inferiores en Login */
+body.login-page main p.text-white\/80 {
+    color: var(--muted) !important;
+}
+
+body.login-page main .bg-white\/20 {
+    background: var(--border) !important;
+    margin-bottom: 20px !important;
+}
+
+/* ==========================================
+   SECCIONES, TARJETAS Y BENTO MÓVIL (2 COLUMNAS)
+========================================== */
+section {
+    background: var(--cream) !important;
+    border: var(--ink) !important;
+    border-radius: var(--radius-card) !important;
+    padding: 18px !important;
+    margin-bottom: 16px !important;
+    box-shadow: none !important;
+}
+
+#userAvatarImg {
+    border: 2px solid var(--plum) !important;
+    box-shadow: 0 0 0 4px var(--mint);
+}
+
+#projectsList,
+#documentsList {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 columnas como en la imagen */
+    gap: 12px;
+}
+
+#projectsList > div,
+#projectsList > article,
+#documentsList > div,
+#documentsList > article {
+    background: var(--mint-light) !important;
+    border: var(--ink) !important;
+    border-radius: var(--radius-card) !important;
+    padding: 16px !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#projectsList > div:nth-child(even),
+#documentsList > div:nth-child(even) {
+    background: var(--lavender-light) !important;
+}
+
+#projectsList > div:hover,
+#documentsList > div:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow-hard) !important;
+}
+
+#emptyState {
+    grid-column: 1 / -1;
+    background: repeating-linear-gradient(
+        -45deg,
+        var(--cream),
+        var(--cream) 10px,
+        var(--lavender-light) 10px,
+        var(--lavender-light) 20px
+    ) !important;
+    border: 1.5px dashed var(--plum) !important;
+    border-radius: var(--radius-card) !important;
+    padding: 28px 16px !important;
+    text-align: center;
+}
+
+/* ==========================================
+   BARRA DE NAVEGACIÓN INFERIOR MINIMALISTA
+========================================== */
+nav {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 100% !important;
+    max-width: 460px !important;
+    background: var(--white) !important;
+    border-top: var(--ink) !important;
+    padding: 10px 12px !important;
+    display: flex !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    z-index: 50;
+    box-shadow: 0 -6px 20px rgba(73, 54, 83, 0.06) !important;
+}
+
+nav a {
+    color: var(--plum-soft) !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    text-decoration: none;
+    position: relative;
+    padding-bottom: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+
+nav a:hover,
+nav a.active,
+nav a[aria-current="page"] {
+    color: var(--plum) !important;
+}
+
+/* Indicador inferior estilo rayita de la casita en la imagen */
+nav a:hover::after,
+nav a.active::after,
+nav a[aria-current="page"]::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    width: 22px;
+    height: 3.5px;
+    background: var(--mint-dark);
+    border-radius: 99px;
+}
+
+/* ==========================================
+   MODALES, ALERTAS Y TOAST
+========================================== */
+[id$="Modal"] {
+    backdrop-filter: blur(6px);
+    background: rgba(52, 43, 57, 0.45) !important;
+}
+
+[id$="Modal"] > div {
+    max-width: 420px !important;
+    background: var(--white) !important;
+    border: var(--ink) !important;
+    border-radius: 30px !important;
+    box-shadow: var(--shadow-hard) !important;
+}
+
+#toastNotification {
+    background: var(--plum) !important;
+    color: var(--white) !important;
+    border: 1.5px solid var(--mint) !important;
+    border-radius: 999px !important;
+}

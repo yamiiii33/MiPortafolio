@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Evidencias - Proyectos</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#493653">
+    
+    <!-- Tipografía limpia: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/tailwind-config.js"></script>
+
+    <style>
+        :root {
+            --mint: #BCE8D8;
+            --mint-soft: #EDF9F4;
+            --mint-accent: #389E82;
+            --lavender: #DCCCF2;
+            --lavender-soft: #F6F1FC;
+            --plum: #493653;
+            --ink: #1E1B24;
+            --muted: #726A80;
+            --line: rgba(73, 54, 83, 0.1);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #E7DFEF;
+            color: var(--ink);
+            margin: 0;
+        }
+
+        /* Fondo ambiental degradado (Lavanda -> Crema -> Menta) */
+        .app-shell {
+            max-width: 430px;
+            min-height: 100vh;
+            margin: 0 auto;
+            background: linear-gradient(165deg, #EFE5FA 0%, #FAF7F2 42%, #E8F7F1 100%);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+            box-shadow: 0 18px 50px rgba(73, 54, 83, 0.14);
+        }
+
+        .app-shell::before {
+            content: "";
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(220, 204, 242, 0.75) 0%, rgba(220, 204, 242, 0) 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .app-shell::after {
+            content: "";
+            position: absolute;
+            top: 380px;
+            left: -70px;
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(188, 232, 216, 0.55) 0%, rgba(188, 232, 216, 0) 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Filas dinámicas de proyectos */
+        .project-row-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            border-radius: 18px;
+            padding: 15px 16px;
+            box-shadow: 0 4px 14px rgba(73, 54, 83, 0.04);
+            transition: all 0.15s ease;
+        }
+
+        .project-row-card:hover {
+            background: #FFFFFF;
+            transform: translateY(-1px);
+        }
+
+        /* Estado vacío limpio */
+        #emptyState {
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(8px);
+            border: 1px dashed #C7B6DC;
+            border-radius: 20px;
+            padding: 32px 20px;
+        }
+
+        /* Barra inferior translúcida */
+        .bottom-nav-clean {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(14px);
+            border-top: 1px solid var(--line);
+            padding: 10px 16px 14px 16px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 40;
+        }
+
+        .nav-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            color: #8E859C;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .nav-tab.active {
+            color: var(--plum);
+            font-weight: 700;
+        }
+
+        .nav-tab.active .nav-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--mint-accent);
+        }
+
+        /* Inputs limpios en modales */
+        .clean-input {
+            width: 100%;
+            background: #F8F6FA;
+            border: 1.5px solid #E5DFEC;
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: var(--ink);
+        }
+        .clean-input:focus {
+            outline: none;
+            border-color: var(--plum);
+            background: #FFFFFF;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-shell">
+        
+        <!-- TOPBAR MINIMALISTA CON BOTÓN "AGREGAR PROYECTO" -->
+        <header class="px-5 pt-5 pb-3 flex items-center justify-between border-b border-[#493653]/10 sticky top-0 bg-white/60 backdrop-blur-md z-30">
+            <span class="text-xs font-bold text-[#493653] bg-[#F6F1FC] px-2.5 py-1 rounded-full">
+                Portafolio
+            </span>
+
+            <span class="text-sm font-bold text-[#1E1B24] tracking-tight">Proyectos</span>
+
+            <button type="button" onclick="openModal()" class="admin-only text-xs font-bold text-white bg-[#493653] hover:opacity-90 px-3 py-1.5 rounded-full flex items-center gap-1 shadow-xs transition-opacity cursor-pointer">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                <span>Agregar proyecto</span>
+            </button>
+        </header>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="flex-1 px-5 pt-5 pb-28 flex flex-col gap-5 relative z-10">
+
+            <!-- Tarjeta encabezado limpia -->
+            <div class="bg-white/75 backdrop-blur-md rounded-2xl p-4 border border-white flex items-center justify-between">
+                <div>
+                    <h1 class="text-lg font-extrabold text-[#1E1B24] leading-tight">Mis Proyectos</h1>
+                    <p class="text-xs text-[#726A80] mt-0.5">Desarrollos, prototipos y evidencias de trabajo</p>
+                </div>
+                <div class="w-10 h-10 rounded-2xl bg-[#EDF9F4] text-[#389E82] flex items-center justify-center shrink-0">
+                    <i data-lucide="folder-kanban" class="w-5 h-5"></i>
+                </div>
+            </div>
+
+            <!-- Listado de proyectos -->
+            <section>
+                <div class="flex items-center justify-between mb-2.5 px-1">
+                    <h2 class="text-sm font-bold text-[#1E1B24]">Proyectos registrados</h2>
+                    <span id="projectsCountBadge" class="text-[11px] font-bold text-[#493653] bg-[#F6F1FC] px-2.5 py-0.5 rounded-full">0</span>
+                </div>
+
+                <div id="projectsList" class="flex flex-col gap-3">
+                    <div id="emptyState" class="flex flex-col items-center justify-center text-center">
+                        <div class="w-12 h-12 rounded-2xl bg-[#F6F1FC] text-[#493653] flex items-center justify-center mb-3">
+                            <i data-lucide="folder-open" class="w-6 h-6"></i>
+                        </div>
+                        <p id="emptyStateText" class="text-xs font-medium text-[#726A80] px-3 leading-relaxed">
+                            Aún no tienes proyectos registrados. Pulsa "+ Agregar proyecto" arriba para añadir uno.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- BARRA INFERIOR MINIMALISTA -->
+        <nav class="bottom-nav-clean">
+            <a href="perfil-usuario.html" class="nav-tab">
+                <i data-lucide="user" class="w-5 h-5"></i>
+                <span>Perfil</span>
+            </a>
+            <a href="#" class="nav-tab active">
+                <i data-lucide="folder-kanban" class="w-5 h-5"></i>
+                <span>Proyectos</span>
+                <span class="nav-dot"></span>
+            </a>
+            <a href="ExperienciaLaboral.html" class="nav-tab">
+                <i data-lucide="briefcase" class="w-5 h-5"></i>
+                <span>Trayectoria</span>
+            </a>
+            <a href="InteresMetas.html" class="nav-tab">
+                <i data-lucide="compass" class="w-5 h-5"></i>
+                <span>Metas</span>
+            </a>
+        </nav>
+
+        <!-- MODAL: AGREGAR PROYECTO + EVIDENCIA -->
+        <div id="addProjectModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4 backdrop-blur-sm">
+            <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl flex flex-col max-h-[90vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-base font-bold text-[#1E1B24]">Agregar Proyecto</h3>
+                    <button type="button" onclick="closeModal()" class="p-1.5 rounded-full hover:bg-gray-100 text-[#726A80]">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <form id="addProjectForm" class="flex flex-col gap-3.5">
+                    <div>
+                        <label for="projectName" class="block text-xs font-semibold text-[#726A80] mb-1">Nombre del Proyecto *</label>
+                        <input type="text" id="projectName" required placeholder="Ej. Sistema Web de Inventario" class="clean-input">
+                    </div>
+
+                    <div>
+                        <label for="projectRole" class="block text-xs font-semibold text-[#726A80] mb-1">Rol o Contribución *</label>
+                        <input type="text" id="projectRole" required placeholder="Ej. Desarrollador Frontend" class="clean-input">
+                    </div>
+
+                    <div>
+                        <label for="projectDesc" class="block text-xs font-semibold text-[#726A80] mb-1">Descripción breve *</label>
+                        <textarea id="projectDesc" rows="3" required placeholder="Describe los objetivos y logros del proyecto..." class="clean-input resize-none"></textarea>
+                    </div>
+
+                    <!-- NUEVO CAMPO: EVIDENCIA DEL PROYECTO -->
+                    <div class="pt-1 border-t border-[#EFEBF4]">
+                        <label class="block text-xs font-semibold text-[#493653] mb-1.5">Evidencia del proyecto (Archivo o Captura)</label>
+                        <input type="file" id="projectEvidenceFile" accept=".pdf,image/*,.zip" class="hidden">
+                        <div onclick="document.getElementById('projectEvidenceFile').click()" class="border-2 border-dashed border-[#DCCCF2] rounded-2xl p-3.5 text-center bg-[#FAF9FC] hover:bg-[#F6F1FC] transition-colors cursor-pointer">
+                            <i data-lucide="upload-cloud" class="w-5 h-5 mx-auto text-[#493653] mb-1"></i>
+                            <span id="projectEvidenceFileName" class="text-xs text-[#1E1B24] font-semibold block truncate">Subir archivo, captura o PDF (opcional)</span>
+                            <span class="text-[10px] text-[#726A80]">PDF, imagen o ZIP (máx. 2 MB)</span>
+                        </div>
+                        <button type="button" id="clearProjectEvidenceBtn" onclick="clearProjectEvidence()" class="hidden mt-1.5 text-[11px] font-semibold text-red-600 hover:underline flex items-center gap-1">
+                            <i data-lucide="x-circle" class="w-3.5 h-3.5"></i> Quitar archivo
+                        </button>
+                    </div>
+
+                    <div>
+                        <label for="projectLink" class="block text-xs font-semibold text-[#726A80] mb-1">Enlace del proyecto / Repositorio (opcional)</label>
+                        <input type="url" id="projectLink" placeholder="https://github.com/..." class="clean-input">
+                    </div>
+
+                    <button type="submit" class="mt-2 w-full bg-[#493653] text-white font-bold text-xs py-3.5 rounded-xl shadow-sm flex items-center justify-center gap-2 transition-transform active:scale-95 cursor-pointer">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                        <span>Guardar Proyecto</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL: VER DETALLE Y EVIDENCIA DEL PROYECTO -->
+        <div id="viewProjectModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4 backdrop-blur-sm">
+            <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl flex flex-col">
+                <div class="flex justify-between items-center mb-2">
+                    <span id="viewProjRole" class="text-[10px] font-bold text-[#389E82] bg-[#EDF9F4] px-2.5 py-0.5 rounded-full">Rol</span>
+                    <button type="button" onclick="closeViewProjectModal()" class="p-1.5 rounded-full hover:bg-gray-100 text-[#726A80]">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <h3 id="viewProjTitle" class="text-base font-bold text-[#1E1B24] mb-2">Nombre del proyecto</h3>
+                <p id="viewProjDesc" class="text-xs text-[#726A80] leading-relaxed mb-3">Descripción...</p>
+
+                <div id="viewProjPreview" class="hidden rounded-2xl overflow-hidden border border-[#EFEBF4] bg-[#FAF9FC] mb-3 flex items-center justify-center max-h-52"></div>
+
+                <div id="viewProjLinkBox" class="hidden bg-[#FAF9FC] rounded-xl p-3 mb-3 text-xs">
+                    <span class="block text-[10px] font-bold text-[#726A80] uppercase mb-0.5">Enlace del proyecto</span>
+                    <a id="viewProjLinkAnchor" href="#" target="_blank" rel="noopener noreferrer" class="text-[#493653] font-bold underline break-all"></a>
+                </div>
+
+                <div class="flex gap-2.5 pt-1">
+                    <button type="button" onclick="closeViewProjectModal()" class="flex-1 bg-[#F3F0F7] text-[#1E1B24] py-2.5 rounded-xl font-semibold text-xs">Cerrar</button>
+                    <button type="button" id="downloadProjEvBtn" onclick="downloadCurrentProjectEvidence()" class="hidden flex-1 bg-[#389E82] text-white py-2.5 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5">
+                        <i data-lucide="download" class="w-3.5 h-3.5"></i> Descargar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="js/proyectos.js"></script>
+    <script>
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    </script>
+</body>
+</html>

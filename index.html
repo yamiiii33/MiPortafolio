@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Evidencias - Iniciar Sesión</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#493653">
+
+    <!-- Tipografías: Space Grotesk + Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/tailwind-config.js"></script>
+
+    <style>
+        :root {
+            --mint: #BCE8D8;
+            --mint-dark: #438D78;
+            --lavender: #DCCCF2;
+            --plum: #493653;
+            --cream: #FAF8F4;
+            --ink: #24192B;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #EAE4F0;
+            margin: 0;
+        }
+
+        h1, .font-display {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Marco de teléfono moderno */
+        .app-shell {
+            max-width: 430px;
+            min-height: 100vh;
+            margin: 0 auto;
+            background: var(--cream);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(36, 25, 43, 0.18);
+        }
+
+        /* Cabecera superior geométrica oscura */
+        .hero-banner {
+            background: var(--plum);
+            color: var(--cream);
+            padding: 32px 26px 48px 26px;
+            position: relative;
+            clip-path: polygon(0 0, 100% 0, 100% 86%, 0% 100%);
+        }
+
+        /* Círculos abstractos decorativos en cabecera */
+        .hero-banner::before {
+            content: "";
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: var(--mint);
+            opacity: 0.22;
+        }
+
+        .hero-banner::after {
+            content: "";
+            position: absolute;
+            bottom: 20px;
+            right: 28px;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 2px solid var(--lavender);
+            opacity: 0.45;
+        }
+
+        /* Inputs estilo moderno con borde grueso y fondo puro */
+        .custom-input {
+            width: 100%;
+            background: #FFFFFF;
+            border: 2px solid #D8CFE0;
+            border-radius: 14px;
+            padding: 14px 16px 14px 44px;
+            font-size: 14px;
+            color: var(--ink);
+            transition: all 0.2s ease;
+        }
+
+        .custom-input:focus {
+            outline: none;
+            border-color: var(--plum);
+            box-shadow: 4px 4px 0px var(--mint);
+        }
+
+        /* Botón Principal Estilo Neo-Brutalista Menta */
+        .btn-main-action {
+            width: 100%;
+            background: var(--mint);
+            color: var(--ink);
+            border: 2px solid var(--ink);
+            border-radius: 16px;
+            padding: 10px 12px 10px 22px;
+            font-weight: 700;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 4px 4px 0px var(--ink);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            cursor: pointer;
+        }
+
+        .btn-main-action:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px var(--ink);
+        }
+
+        .btn-icon-badge {
+            width: 38px;
+            height: 38px;
+            background: var(--plum);
+            color: var(--mint);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Botón Secundario (Invitado) */
+        .btn-guest-pill {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(6px);
+            border: 1.5px solid rgba(220, 204, 242, 0.5);
+            color: var(--mint);
+            padding: 7px 14px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-guest-pill:hover {
+            background: var(--mint);
+            color: var(--ink);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-shell">
+        
+        <!-- ZONA SUPERIOR: IDENTIDAD NATURAL Y ACCESO INVITADO -->
+        <header class="hero-banner">
+            <div class="flex items-center justify-between mb-6 relative z-10">
+                <span class="px-3 py-1 rounded-full bg-[#DCCCF2]/20 border border-[#DCCCF2]/40 text-[#DCCCF2] text-[11px] font-bold tracking-widest uppercase">
+                    Mi Portafolio
+                </span>
+
+                <!-- Botón Invitado movido arriba como acceso rápido -->
+                <button type="button" id="guestBtn" class="btn-guest-pill">
+                    <span>Entrar como invitado</span>
+                    <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                </button>
+            </div>
+
+            <div class="relative z-10">
+                <h1 class="text-[34px] leading-[1.08] font-bold tracking-tight text-white mb-2">
+                    Portal de<br>
+                    <span class="text-[#BCE8D8]">Evidencias.</span>
+                </h1>
+                <p class="text-xs text-[#DCCCF2]/90 max-w-[275px] leading-relaxed">
+                    Guarda tus proyectos, certificados y avances de la carrera en un mismo espacio.
+                </p>
+            </div>
+        </header>
+
+        <!-- ZONA INFERIOR: FORMULARIO LIMPIO -->
+        <main class="flex-1 px-6 pt-4 pb-8 flex flex-col justify-between">
+            
+            <div>
+                <div class="flex items-center justify-between mb-5">
+                    <h2 class="text-lg font-bold text-[#24192B]">Iniciar sesión</h2>
+                    <span class="w-8 h-1 bg-[#438D78] rounded-full"></span>
+                </div>
+
+                <!-- Alerta de autenticación -->
+                <div id="authAlert" class="hidden mb-4 p-3 rounded-xl text-xs font-semibold flex items-start gap-2 border">
+                    <i id="authAlertIcon" data-lucide="alert-circle" class="w-4 h-4 shrink-0 mt-0.5"></i>
+                    <span id="authAlertText">Mensaje de validación</span>
+                </div>
+
+                <form id="loginForm" class="space-y-4" novalidate>
+                    
+                    <!-- Correo -->
+                    <div>
+                        <label for="email" class="block text-xs font-bold text-[#493653] mb-1.5">Correo institucional o personal</label>
+                        <div class="relative flex items-center">
+                            <i data-lucide="at-sign" class="w-4 h-4 text-[#725D7E] absolute left-3.5 pointer-events-none"></i>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                placeholder="usuario@dominio.com" 
+                                required 
+                                class="custom-input"
+                            >
+                        </div>
+                        <p id="emailError" class="error-message hidden text-red-600 text-xs mt-1">Ingresa un correo válido.</p>
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label for="password" class="text-xs font-bold text-[#493653]">Contraseña</label>
+                            <a href="registro.html" class="text-[11px] font-semibold text-[#438D78] hover:underline">¿Olvidaste tu clave?</a>
+                        </div>
+                        <div class="relative flex items-center">
+                            <i data-lucide="key-round" class="w-4 h-4 text-[#725D7E] absolute left-3.5 pointer-events-none"></i>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                placeholder="••••••••" 
+                                required 
+                                class="custom-input pr-11 tracking-widest"
+                            >
+                            <button type="button" onclick="togglePassword('password', this)" class="absolute right-3.5 text-[#725D7E] hover:text-[#24192B]">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <p id="passwordError" class="error-message hidden text-red-600 text-xs mt-1">La contraseña es obligatoria.</p>
+                    </div>
+
+                    <!-- Botón Principal -->
+                    <div class="pt-3">
+                        <button type="submit" id="submitBtn" class="btn-main-action">
+                            <span>Entrar a mi portafolio</span>
+                            <span class="btn-icon-badge">
+                                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Pie de pantalla: Registro -->
+            <div class="mt-8 pt-5 border-t border-[#E2D9EA] flex items-center justify-between">
+                <span class="text-xs text-[#725D7E]">¿Eres nuevo aquí?</span>
+                <a href="registro.html" class="px-4 py-2 rounded-xl bg-[#DCCCF2]/60 text-[#493653] text-xs font-bold hover:bg-[#DCCCF2] transition-colors">
+                    Crear cuenta →
+                </a>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Scripts intactos -->
+    <script src="js/auth.js"></script>
+    <script src="js/login.js"></script>
+    <script>
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    </script>
+</body>
+</html>

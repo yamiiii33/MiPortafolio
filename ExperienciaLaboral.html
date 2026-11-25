@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Evidencias - Trayectoria y Experiencia</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#493653">
+    
+    <!-- Tipografía limpia: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/tailwind-config.js"></script>
+
+    <style>
+        :root {
+            --mint: #BCE8D8;
+            --mint-soft: #EDF9F4;
+            --mint-accent: #389E82;
+            --lavender: #DCCCF2;
+            --lavender-soft: #F6F1FC;
+            --plum: #493653;
+            --ink: #1E1B24;
+            --muted: #726A80;
+            --line: rgba(73, 54, 83, 0.1);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #E7DFEF;
+            color: var(--ink);
+            margin: 0;
+        }
+
+        /* Fondo ambiental degradado (Lavanda -> Crema -> Menta) */
+        .app-shell {
+            max-width: 430px;
+            min-height: 100vh;
+            margin: 0 auto;
+            background: linear-gradient(165deg, #EFE5FA 0%, #FAF7F2 42%, #E8F7F1 100%);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+            box-shadow: 0 18px 50px rgba(73, 54, 83, 0.14);
+        }
+
+        .app-shell::before {
+            content: "";
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(220, 204, 242, 0.75) 0%, rgba(220, 204, 242, 0) 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .app-shell::after {
+            content: "";
+            position: absolute;
+            top: 380px;
+            left: -70px;
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(188, 232, 216, 0.55) 0%, rgba(188, 232, 216, 0) 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Tarjetas tipo listado translúcido */
+        .exp-row-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            border-radius: 18px;
+            padding: 14px 16px;
+            box-shadow: 0 4px 14px rgba(73, 54, 83, 0.04);
+            transition: all 0.15s ease;
+        }
+
+        .exp-row-card:hover {
+            background: #FFFFFF;
+            transform: translateY(-1px);
+        }
+
+        /* Barra inferior translúcida */
+        .bottom-nav-clean {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(14px);
+            border-top: 1px solid var(--line);
+            padding: 10px 16px 14px 16px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 40;
+        }
+
+        .nav-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            color: #8E859C;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .nav-tab.active {
+            color: var(--plum);
+            font-weight: 700;
+        }
+
+        .nav-tab.active .nav-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--mint-accent);
+        }
+
+        /* Inputs limpios en modales */
+        .clean-input {
+            width: 100%;
+            background: #F8F6FA;
+            border: 1.5px solid #E5DFEC;
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: var(--ink);
+        }
+        .clean-input:focus {
+            outline: none;
+            border-color: var(--plum);
+            background: #FFFFFF;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-shell">
+        
+        <!-- TOPBAR MINIMALISTA CON BOTÓN DE AÑADIR INTEGRADO -->
+        <header class="px-5 pt-5 pb-3 flex items-center justify-between border-b border-[#493653]/10 sticky top-0 bg-white/60 backdrop-blur-md z-30">
+            <span class="text-xs font-bold text-[#389E82] bg-[#EDF9F4] px-2.5 py-1 rounded-full">
+                Trayectoria
+            </span>
+
+            <span class="text-sm font-bold text-[#1E1B24] tracking-tight">Experiencia</span>
+
+            <button type="button" onclick="openModal()" class="admin-only text-xs font-bold text-white bg-[#493653] hover:opacity-90 px-3 py-1.5 rounded-full flex items-center gap-1 shadow-xs transition-opacity cursor-pointer">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                <span>Añadir</span>
+            </button>
+        </header>
+
+        <!-- CONTENIDO PRINCIPAL EN LISTADO -->
+        <main class="flex-1 px-5 pt-5 pb-28 flex flex-col gap-6 relative z-10">
+
+            <!-- Resumen superior rápido -->
+            <div class="bg-white/75 backdrop-blur-md rounded-2xl p-4 border border-white flex items-center justify-between">
+                <div>
+                    <h1 class="text-lg font-extrabold text-[#1E1B24] leading-tight">Experiencia y Prácticas</h1>
+                    <p class="text-xs text-[#726A80] mt-0.5">Historial profesional con evidencias probatorias</p>
+                </div>
+                <div class="w-10 h-10 rounded-2xl bg-[#F6F1FC] text-[#493653] flex items-center justify-center shrink-0">
+                    <i data-lucide="award" class="w-5 h-5"></i>
+                </div>
+            </div>
+
+            <!-- Sección 1: Experiencia Laboral -->
+            <section>
+                <div class="flex items-center justify-between mb-2.5 px-1">
+                    <h2 class="text-sm font-bold text-[#1E1B24]">Experiencia Laboral</h2>
+                    <span id="count-laboral" class="text-[11px] font-bold text-[#493653] bg-[#F6F1FC] px-2.5 py-0.5 rounded-full">0</span>
+                </div>
+                <div id="lista-laboral" class="flex flex-col gap-2.5"></div>
+            </section>
+
+            <!-- Sección 2: Prácticas y Servicio Social -->
+            <section>
+                <div class="flex items-center justify-between mb-2.5 px-1">
+                    <h2 class="text-sm font-bold text-[#1E1B24]">Prácticas y Servicio Social</h2>
+                    <span id="count-practicas" class="text-[11px] font-bold text-[#389E82] bg-[#EDF9F4] px-2.5 py-0.5 rounded-full">0</span>
+                </div>
+                <div id="lista-practicas" class="flex flex-col gap-2.5"></div>
+            </section>
+
+        </main>
+
+        <!-- BARRA INFERIOR MINIMALISTA -->
+        <nav class="bottom-nav-clean">
+            <a href="perfil-usuario.html" class="nav-tab">
+                <i data-lucide="user" class="w-5 h-5"></i>
+                <span>Perfil</span>
+            </a>
+            <a href="ProyectosPracticas.html" class="nav-tab">
+                <i data-lucide="folder-kanban" class="w-5 h-5"></i>
+                <span>Proyectos</span>
+            </a>
+            <a href="#" class="nav-tab active">
+                <i data-lucide="briefcase" class="w-5 h-5"></i>
+                <span>Trayectoria</span>
+                <span class="nav-dot"></span>
+            </a>
+            <a href="InteresMetas.html" class="nav-tab">
+                <i data-lucide="compass" class="w-5 h-5"></i>
+                <span>Metas</span>
+            </a>
+        </nav>
+
+        <!-- MODAL: AÑADIR EXPERIENCIA + EVIDENCIA -->
+        <div id="addExperienceModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4 backdrop-blur-sm">
+            <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl flex flex-col max-h-[90vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-base font-bold text-[#1E1B24]">Nueva Experiencia</h3>
+                    <button type="button" onclick="closeModal()" class="p-1.5 rounded-full hover:bg-gray-100 text-[#726A80]">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <form id="addExperienceForm" class="flex flex-col gap-3.5">
+                    <div>
+                        <label class="block text-xs font-semibold text-[#726A80] mb-1.5">Categoría</label>
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <label class="cursor-pointer relative">
+                                <input type="radio" name="expType" value="laboral" class="peer sr-only" checked>
+                                <div class="w-full text-center py-2.5 rounded-xl border border-[#E5DFEC] bg-[#F8F6FA] text-[#726A80] text-xs font-bold transition-all peer-checked:border-[#493653] peer-checked:bg-[#493653] peer-checked:text-white">
+                                    Laboral
+                                </div>
+                            </label>
+                            <label class="cursor-pointer relative">
+                                <input type="radio" name="expType" value="practicas" class="peer sr-only">
+                                <div class="w-full text-center py-2.5 rounded-xl border border-[#E5DFEC] bg-[#F8F6FA] text-[#726A80] text-xs font-bold transition-all peer-checked:border-[#389E82] peer-checked:bg-[#389E82] peer-checked:text-white">
+                                    Prácticas
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="jobTitle" class="block text-xs font-semibold text-[#726A80] mb-1">Puesto o Rol *</label>
+                        <input type="text" id="jobTitle" required placeholder="Ej. Practicante de Desarrollo Web" class="clean-input">
+                    </div>
+
+                    <div>
+                        <label for="companyName" class="block text-xs font-semibold text-[#726A80] mb-1">Empresa o Institución *</label>
+                        <input type="text" id="companyName" required placeholder="Ej. Empresa Tech / Dependencia" class="clean-input">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label for="startDate" class="block text-xs font-semibold text-[#726A80] mb-1">Inicio *</label>
+                            <input type="text" id="startDate" required placeholder="Ej. Ene 2025" class="clean-input">
+                        </div>
+                        <div>
+                            <label for="endDate" class="block text-xs font-semibold text-[#726A80] mb-1">Fin</label>
+                            <input type="text" id="endDate" placeholder="Ej. Presente" class="clean-input">
+                        </div>
+                    </div>
+
+                    <!-- NUEVO CAMPO: EVIDENCIA PROBATORIA -->
+                    <div class="pt-1 border-t border-[#EFEBF4]">
+                        <label class="block text-xs font-semibold text-[#493653] mb-1.5">Evidencia (Constancia / Carta / Foto)</label>
+                        <input type="file" id="expEvidenceFile" accept=".pdf,image/*" class="hidden">
+                        <div onclick="document.getElementById('expEvidenceFile').click()" class="border-2 border-dashed border-[#DCCCF2] rounded-2xl p-3.5 text-center bg-[#FAF9FC] hover:bg-[#F6F1FC] transition-colors cursor-pointer">
+                            <i data-lucide="paperclip" class="w-5 h-5 mx-auto text-[#493653] mb-1"></i>
+                            <span id="expEvidenceFileName" class="text-xs text-[#1E1B24] font-semibold block truncate">Adjuntar PDF o imagen (opcional)</span>
+                            <span class="text-[10px] text-[#726A80]">Carta de liberación, constancia o recibo (máx. 2 MB)</span>
+                        </div>
+                        <button type="button" id="clearExpEvidenceBtn" onclick="clearExpEvidence()" class="hidden mt-1.5 text-[11px] font-semibold text-red-600 hover:underline flex items-center gap-1">
+                            <i data-lucide="x-circle" class="w-3.5 h-3.5"></i> Quitar archivo
+                        </button>
+                    </div>
+
+                    <div>
+                        <label for="expEvidenceNote" class="block text-xs font-semibold text-[#726A80] mb-1">Nota o enlace de referencia</label>
+                        <input type="text" id="expEvidenceNote" placeholder="Ej. Folio de liberación o enlace..." class="clean-input">
+                    </div>
+
+                    <button type="submit" class="mt-2 w-full bg-[#493653] text-white font-bold text-xs py-3.5 rounded-xl shadow-sm flex items-center justify-center gap-2 transition-transform active:scale-95 cursor-pointer">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                        <span>Guardar Experiencia</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL: VER EVIDENCIA DE EXPERIENCIA -->
+        <div id="viewEvidenceModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4 backdrop-blur-sm">
+            <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl flex flex-col">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 id="viewEvTitle" class="text-base font-bold text-[#1E1B24] truncate">Detalle de Evidencia</h3>
+                    <button type="button" onclick="closeEvidenceModal()" class="p-1.5 rounded-full hover:bg-gray-100 text-[#726A80]">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <p id="viewEvSubtitle" class="text-xs text-[#726A80] mb-3">Empresa • Periodo</p>
+
+                <div id="viewEvPreview" class="hidden rounded-2xl overflow-hidden border border-[#EFEBF4] bg-[#FAF9FC] mb-3 flex items-center justify-center max-h-52"></div>
+
+                <div id="viewEvNoteBox" class="hidden bg-[#FAF9FC] rounded-xl p-3 mb-3 text-xs text-[#1E1B24]">
+                    <span class="block text-[10px] font-bold text-[#726A80] uppercase mb-0.5">Referencia / Nota</span>
+                    <span id="viewEvNoteText" class="break-words"></span>
+                </div>
+
+                <div class="flex gap-2.5 pt-1">
+                    <button type="button" onclick="closeEvidenceModal()" class="flex-1 bg-[#F3F0F7] text-[#1E1B24] py-2.5 rounded-xl font-semibold text-xs">Cerrar</button>
+                    <button type="button" id="downloadEvBtn" onclick="downloadCurrentExpEvidence()" class="hidden flex-1 bg-[#389E82] text-white py-2.5 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5">
+                        <i data-lucide="download" class="w-3.5 h-3.5"></i> Descargar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="js/experiencia.js"></script>
+    <script>
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    </script>
+</body>
+</html>
